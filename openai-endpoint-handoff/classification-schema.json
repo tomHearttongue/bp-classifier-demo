@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SupportIntentClassification",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "service_id": {
+      "description": "The selected service ID from the request, or null if no service clearly matches.",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "missing_source": {
+      "type": "boolean",
+      "description": "True when classification depends on a source that is absent or undefined."
+    },
+    "ambiguous": {
+      "type": "boolean",
+      "description": "True when multiple services could plausibly match."
+    },
+    "model": {
+      "type": "string",
+      "description": "Model used by the endpoint."
+    }
+  },
+  "required": [
+    "service_id",
+    "confidence",
+    "rationale",
+    "missing_source",
+    "ambiguous",
+    "model"
+  ]
+}

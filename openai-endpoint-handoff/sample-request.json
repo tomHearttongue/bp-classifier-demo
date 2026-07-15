@@ -1,0 +1,29 @@
+{
+  "question": "How do I enter my airfare expense for an upcoming client onsite meeting?",
+  "services": [
+    {
+      "id": "travel",
+      "service": "Travel and Expense",
+      "owner": "Finance / Travel Operations",
+      "source_required": "Travel and Expense Policy"
+    },
+    {
+      "id": "badge",
+      "service": "Facilities Access",
+      "owner": "Facilities / Security",
+      "source_required": "Facilities Access Policy"
+    },
+    {
+      "id": "gym",
+      "service": "Facilities Amenities",
+      "owner": "Facilities",
+      "source_required": "Facilities Amenities Guide"
+    },
+    {
+      "id": "legal",
+      "service": "Legal / Sales Operations",
+      "owner": "Legal / Sales Operations",
+      "source_required": "Contract Intake Procedure"
+    }
+  ]
+}

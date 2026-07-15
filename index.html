@@ -1,0 +1,1589 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI-Governed Internal Support Orchestrator</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fb;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f8;
+      --ink: #172026;
+      --muted: #5d6873;
+      --line: #d8e0e6;
+      --primary: #176b6b;
+      --primary-dark: #0e4e4f;
+      --primary-soft: #dff2f0;
+      --blue: #2f5f9f;
+      --blue-soft: #e4edfb;
+      --gold: #976915;
+      --gold-soft: #fff1d3;
+      --red: #a23d35;
+      --red-soft: #fae3e1;
+      --green: #28764f;
+      --green-soft: #e1f3e9;
+      --shadow: 0 14px 36px rgba(33, 48, 65, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .hero {
+      background:
+        linear-gradient(120deg, rgba(11, 45, 54, 0.92), rgba(23, 107, 107, 0.82)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1400' height='720' viewBox='0 0 1400 720'%3E%3Crect width='1400' height='720' fill='%231b3943'/%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.16' stroke-width='2'%3E%3Cpath d='M80 164h260v128H80zM390 164h260v128H390zM700 164h260v128H700zM1010 164h260v128h-260zM235 356h260v128H235zM545 356h260v128H545zM855 356h260v128H855z'/%3E%3Cpath d='M340 228h50M650 228h50M960 228h50M495 420h50M805 420h50M1115 420h72'/%3E%3Cpath d='M210 292v64M520 292v64M830 292v64M1140 292v64'/%3E%3C/g%3E%3Cg fill='%23ffffff' fill-opacity='.18'%3E%3Ccircle cx='80' cy='164' r='8'/%3E%3Ccircle cx='390' cy='164' r='8'/%3E%3Ccircle cx='700' cy='164' r='8'/%3E%3Ccircle cx='1010' cy='164' r='8'/%3E%3Ccircle cx='235' cy='356' r='8'/%3E%3Ccircle cx='545' cy='356' r='8'/%3E%3Ccircle cx='855' cy='356' r='8'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      padding: 34px 0 56px;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 58px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: 800;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 0.98rem;
+    }
+
+    .brand span,
+    .topnote {
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 0.9rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.75fr);
+      gap: 34px;
+      align-items: end;
+    }
+
+    .hero h1 {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(2.2rem, 1.45rem + 3vw, 4.7rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 730px;
+      margin: 18px 0 0;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: clamp(1rem, 0.96rem + 0.3vw, 1.18rem);
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .hero-panel {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 18px;
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    .signal-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .signal {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .signal b {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      font-size: 0.82rem;
+    }
+
+    .signal span {
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.45;
+      font-size: 0.92rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      border-radius: 7px;
+      padding: 10px 14px;
+      background: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--primary);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-light {
+      background: #fff;
+      color: #14363a;
+      border-color: #fff;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .main {
+      padding: 28px 0 54px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tab {
+      border-radius: 7px;
+      padding: 10px 12px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .tab.active {
+      color: var(--ink);
+      background: var(--surface);
+      border-color: var(--line);
+      box-shadow: 0 8px 22px rgba(33, 48, 65, 0.08);
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .review-guide {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .guide-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 8px 22px rgba(33, 48, 65, 0.07);
+    }
+
+    .guide-card h2,
+    .guide-card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .guide-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      margin-bottom: 9px;
+      border-radius: 999px;
+      padding: 6px 9px;
+      background: var(--blue-soft);
+      color: #214a82;
+      border: 1px solid #cad9f3;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin: 0 0 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: clamp(1.4rem, 1.2rem + 1vw, 2.1rem);
+      letter-spacing: 0;
+    }
+
+    .section-title p {
+      margin: 7px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      padding: 18px 18px 0;
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .panel-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.93rem;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 11px 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 112px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(23, 107, 107, 0.16);
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .scenario {
+      display: grid;
+      gap: 8px;
+      text-align: left;
+      min-height: 128px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 13px;
+      cursor: pointer;
+    }
+
+    .scenario:hover,
+    .scenario.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .scenario strong {
+      font-size: 0.95rem;
+    }
+
+    .scenario span {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.4;
+    }
+
+    .badge-row,
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .badge,
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 8px;
+      font-size: 0.78rem;
+      color: #29404a;
+      background: var(--surface-soft);
+      border: 1px solid rgba(216, 224, 230, 0.8);
+    }
+
+    .badge.ai {
+      background: var(--blue-soft);
+      color: #214a82;
+      border-color: #cad9f3;
+    }
+
+    .badge.rule {
+      background: var(--green-soft);
+      color: #235c42;
+      border-color: #c8e5d5;
+    }
+
+    .badge.review {
+      background: var(--gold-soft);
+      color: #674609;
+      border-color: #f0d79c;
+    }
+
+    .result-shell {
+      display: grid;
+      gap: 14px;
+    }
+
+    .outcome {
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .outcome.answer {
+      background: var(--green-soft);
+      border-color: #bee0cc;
+    }
+
+    .outcome.collect {
+      background: var(--blue-soft);
+      border-color: #c9d8f1;
+    }
+
+    .outcome.review {
+      background: var(--gold-soft);
+      border-color: #efd89f;
+    }
+
+    .outcome.blocked {
+      background: var(--red-soft);
+      border-color: #efc8c3;
+    }
+
+    .outcome h3 {
+      margin: 0 0 8px;
+      font-size: 1.12rem;
+    }
+
+    .outcome p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .step {
+      min-height: 112px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      padding: 11px;
+      background: #fff;
+    }
+
+    .step b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.88rem;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .step.done {
+      background: var(--green-soft);
+      border-color: #bedeca;
+    }
+
+    .step.active {
+      background: var(--blue-soft);
+      border-color: #c9d8f1;
+    }
+
+    .step.warn {
+      background: var(--gold-soft);
+      border-color: #efd89f;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .meta {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 11px;
+      min-height: 74px;
+    }
+
+    .meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 5px;
+    }
+
+    .meta strong {
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .intake {
+      display: none;
+    }
+
+    .intake.visible {
+      display: block;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .check input {
+      width: auto;
+      margin-top: 3px;
+    }
+
+    .packet {
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .packet.visible {
+      display: block;
+    }
+
+    .packet h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .packet pre {
+      margin: 0;
+      white-space: pre-wrap;
+      font-size: 0.84rem;
+      line-height: 1.55;
+      color: #26353c;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    }
+
+    .api-card {
+      border: 1px solid #cad9f3;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      padding: 13px;
+    }
+
+    .api-card summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: #214a82;
+    }
+
+    .api-card p {
+      margin: 8px 0 10px;
+      color: #31527d;
+      line-height: 1.45;
+      font-size: 0.9rem;
+    }
+
+    .trace {
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      padding: 10px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 8px 22px rgba(33, 48, 65, 0.07);
+    }
+
+    .info-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .info-card p,
+    .info-card li {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .info-card p {
+      margin: 0;
+    }
+
+    .info-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .architecture {
+      display: grid;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .arch-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.6fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .arch-label {
+      display: grid;
+      align-items: center;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      padding: 12px;
+      font-weight: 800;
+      background: var(--surface-soft);
+    }
+
+    .arch-items {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .arch-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px;
+      min-height: 86px;
+      background: #fff;
+    }
+
+    .arch-item strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    .arch-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .workspace,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .cards,
+      .arch-items {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .wrap {
+        width: min(100% - 22px, 1180px);
+      }
+
+      .hero {
+        padding-top: 22px;
+      }
+
+      .topbar,
+      .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .topbar {
+        margin-bottom: 34px;
+      }
+
+      .scenario-grid,
+      .decision-grid,
+      .meta-grid,
+      .field-grid,
+      .review-guide,
+      .cards,
+      .arch-row,
+      .arch-items {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="wrap">
+        <div class="topbar">
+          <div class="brand">
+            <div class="mark" aria-hidden="true">AI</div>
+            <div>
+              <strong>AI-Governed Internal Support Orchestrator</strong>
+              <span>Interactive prototype plus reviewer context</span>
+            </div>
+          </div>
+          <div class="topnote">Mock data. No production integrations.</div>
+        </div>
+
+        <div class="hero-grid">
+          <div>
+            <h1>A playable prototype of governed internal support.</h1>
+            <p class="hero-copy">The first tab is the prototype. The other tabs explain the architecture, integration points, governance model, and production boundaries for reviewers.</p>
+            <div class="hero-actions">
+              <button class="btn btn-light" type="button" data-jump="demo">Open prototype</button>
+              <button class="btn btn-ghost" type="button" data-tab-target="architecture">Read reviewer context</button>
+            </div>
+          </div>
+
+          <aside class="hero-panel" aria-label="Design principles">
+            <h2>Design principles</h2>
+            <div class="signal-grid">
+              <div class="signal"><b>1</b><span>No approved source, no authoritative answer.</span></div>
+              <div class="signal"><b>2</b><span>AI interprets and assists; deterministic controls authorize and act.</span></div>
+              <div class="signal"><b>3</b><span>Human review is explicit, routed, and measurable.</span></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </header>
+
+    <main class="main" id="demo">
+      <div class="wrap">
+        <section class="review-guide" aria-label="How to review this page">
+          <article class="guide-card">
+            <span class="eyebrow">Start here</span>
+            <h2>Interactive Prototype</h2>
+            <p>Use the first tab to play with mock support requests and see how the workflow decides whether to answer, collect more information, submit, or route to review.</p>
+          </article>
+          <article class="guide-card">
+            <span class="eyebrow">Reviewer context</span>
+            <h3>Architecture, governance, and production thinking</h3>
+            <p>The second and third tabs are explanatory. They show where AI fits, where deterministic controls belong, what systems would integrate, and what would need evaluation before production.</p>
+          </article>
+        </section>
+
+        <nav class="tabs" aria-label="Prototype sections">
+          <button class="tab active" type="button" data-tab-target="orchestrator">Interactive Prototype</button>
+          <button class="tab" type="button" data-tab-target="architecture">Reviewer Context: Architecture</button>
+          <button class="tab" type="button" data-tab-target="governance">Reviewer Context: Governance</button>
+        </nav>
+
+        <section class="view active" id="orchestrator">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Playable artifact</span>
+              <h2>Interactive Support Workflow Prototype</h2>
+              <p>This is the demo surface. Choose a scenario or type a request to see mock classification, source checks, relevant intake fields, and the final workflow decision.</p>
+            </div>
+            <span class="pill" id="statusPill">Ready for a request</span>
+          </div>
+
+          <div class="workspace">
+            <section class="panel">
+              <div class="panel-head">
+                <h3>Employee request</h3>
+                <p>These examples demonstrate different governance outcomes rather than hardcoded production workflows.</p>
+              </div>
+              <div class="panel-body stack">
+                <div>
+                  <label for="questionInput">Question or request</label>
+                  <textarea id="questionInput" placeholder="Example: I lost my employee key card. How do I get a replacement?"></textarea>
+                </div>
+
+                <details class="api-card">
+                  <summary>Optional OpenAI API classifier</summary>
+                  <p>For GitHub Pages, OpenAI calls must go through a server-side endpoint so the API key is never exposed in this page. Leave this blank to use the deterministic fallback.</p>
+                  <div class="field-grid">
+                    <div>
+                      <label for="apiEndpointInput">Classifier endpoint URL</label>
+                      <input id="apiEndpointInput" type="url" placeholder="https://your-worker.example.workers.dev/classify">
+                    </div>
+                    <div>
+                      <label for="classifierMode">Classifier mode</label>
+                      <select id="classifierMode">
+                        <option value="fallback">Deterministic fallback</option>
+                        <option value="openai">OpenAI API endpoint</option>
+                      </select>
+                    </div>
+                  </div>
+                </details>
+
+                <div class="hero-actions">
+                  <button class="btn btn-primary" id="analyzeBtn" type="button">Analyze request</button>
+                  <button class="btn" id="resetBtn" type="button">Reset</button>
+                </div>
+
+                <div class="scenario-grid" aria-label="Demo scenarios">
+                  <button class="scenario" type="button" data-scenario="travel">
+                    <strong>Airfare for client onsite</strong>
+                    <span>Requires travel policy, preapproval, client/project coding, and review when rules are incomplete.</span>
+                    <span class="badge-row"><span class="badge ai">AI: classify</span><span class="badge review">review</span></span>
+                  </button>
+                  <button class="scenario" type="button" data-scenario="badge">
+                    <strong>Lost employee key card</strong>
+                    <span>Can be automated for standard replacements when identity, location, and exceptions are clear.</span>
+                    <span class="badge-row"><span class="badge rule">rules: submit</span><span class="badge ai">AI: extract</span></span>
+                  </button>
+                  <button class="scenario" type="button" data-scenario="gym">
+                    <strong>Company gym access</strong>
+                    <span>Answers from amenities guidance, then routes eligibility exceptions to Facilities.</span>
+                    <span class="badge-row"><span class="badge ai">AI: summarize</span><span class="badge review">eligibility</span></span>
+                  </button>
+                  <button class="scenario" type="button" data-scenario="legal">
+                    <strong>Sales agreement draft</strong>
+                    <span>Collects deal context for legal intake without drafting or approving legal terms.</span>
+                    <span class="badge-row"><span class="badge review">approval</span><span class="badge rule">rules: route</span></span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section class="result-shell">
+              <section class="panel">
+                <div class="panel-head">
+                  <h3>Decision outcome</h3>
+                  <p>The visible decision path is the main artifact: what AI can assist with, what rules control, and when a human owns the next step.</p>
+                </div>
+                <div class="panel-body stack">
+                  <div class="outcome" id="outcomeBox">
+                    <h3 id="outcomeTitle">No request analyzed yet</h3>
+                    <p id="outcomeMessage">Start with a scenario or write a request to see how the orchestration layer responds.</p>
+                  </div>
+
+                  <div class="decision-grid" aria-label="Decision path">
+                    <div class="step" id="stepIntent"><b>1. Intent</b><span>AI-assisted classification from natural language.</span></div>
+                    <div class="step" id="stepSource"><b>2. Source</b><span>Approved source, owner, and review date check.</span></div>
+                    <div class="step" id="stepControl"><b>3. Controls</b><span>Deterministic eligibility, approval, and exception rules.</span></div>
+                    <div class="step" id="stepOutcome"><b>4. Outcome</b><span>Answer, collect info, submit, or route.</span></div>
+                  </div>
+
+                  <div class="meta-grid">
+                    <div class="meta"><span>Service</span><strong id="metaService">-</strong></div>
+                    <div class="meta"><span>Owner</span><strong id="metaOwner">-</strong></div>
+                    <div class="meta"><span>Approved source</span><strong id="metaSource">-</strong></div>
+                    <div class="meta"><span>Next system</span><strong id="metaSystem">-</strong></div>
+                  </div>
+
+                  <div>
+                    <label>Review flags</label>
+                    <div class="tag-row" id="flagList"><span class="tag">none yet</span></div>
+                  </div>
+
+                  <div class="trace" id="classifierTrace">Classifier: waiting for request.</div>
+                </div>
+              </section>
+            </section>
+          </div>
+
+          <section class="panel intake" id="intakePanel" aria-live="polite">
+            <div class="panel-head">
+              <h3 id="intakeTitle">Guided request intake</h3>
+              <p id="intakeIntro">Relevant fields will appear after a request is analyzed.</p>
+            </div>
+            <div class="panel-body stack">
+              <div class="field-grid" id="dynamicFields"></div>
+              <div>
+                <label>Exception checks</label>
+                <div class="check-list" id="exceptionChecks"></div>
+              </div>
+              <div class="hero-actions">
+                <button class="btn btn-primary" id="evaluateBtn" type="button">Evaluate next step</button>
+              </div>
+              <div class="packet" id="packetPanel">
+                <h3 id="packetTitle">Review packet</h3>
+                <pre id="packetText"></pre>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="architecture">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Reviewer context</span>
+              <h2>Architecture & Integration Strategy</h2>
+              <p>This section explains the production pattern behind the prototype. It is not part of the playable workflow; it shows how the orchestration layer would select the right tool for each part of the support process.</p>
+            </div>
+            <span class="pill">AI + deterministic workflow</span>
+          </div>
+
+          <div class="architecture">
+            <div class="arch-row">
+              <div class="arch-label">Employee Experience</div>
+              <div class="arch-items">
+                <div class="arch-item"><strong>Support interface</strong><span>Web, Teams, Slack, portal, or ticket intake.</span></div>
+                <div class="arch-item"><strong>Request context</strong><span>User, role, location, department, and service history.</span></div>
+                <div class="arch-item"><strong>Status feedback</strong><span>Answer, missing info, submitted action, or review route.</span></div>
+              </div>
+            </div>
+            <div class="arch-row">
+              <div class="arch-label">AI-Assisted Layer</div>
+              <div class="arch-items">
+                <div class="arch-item"><strong>Intent classification</strong><span>Understand the employee's natural-language need.</span></div>
+                <div class="arch-item"><strong>Grounded retrieval</strong><span>Find approved policy, procedure, and service metadata.</span></div>
+                <div class="arch-item"><strong>Handoff drafting</strong><span>Summarize context for the human reviewer.</span></div>
+              </div>
+            </div>
+            <div class="arch-row">
+              <div class="arch-label">Deterministic Controls</div>
+              <div class="arch-items">
+                <div class="arch-item"><strong>Eligibility</strong><span>Role, approval, access, and policy checks.</span></div>
+                <div class="arch-item"><strong>Routing</strong><span>Queue selection, SLA class, and exception handling.</span></div>
+                <div class="arch-item"><strong>Actions</strong><span>Ticket creation, workflow state changes, and audit logs.</span></div>
+              </div>
+            </div>
+            <div class="arch-row">
+              <div class="arch-label">Enterprise Systems</div>
+              <div class="arch-items">
+                <div class="arch-item"><strong>Knowledge</strong><span>SharePoint, Confluence, ServiceNow KB, policy repositories.</span></div>
+                <div class="arch-item"><strong>Identity & records</strong><span>Okta, Entra ID, HRIS, badge systems, Concur, Workday.</span></div>
+                <div class="arch-item"><strong>Workflow</strong><span>ServiceNow, Jira Service Management, Zendesk, Teams, email.</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="governance">
+          <div class="section-title">
+            <div>
+              <span class="eyebrow">Reviewer context</span>
+              <h2>Governance & Evaluation</h2>
+              <p>This section explains the operating model and deployment boundaries. It describes what the prototype demonstrates and what would need to be evaluated before production use.</p>
+            </div>
+            <span class="pill">Proof of concept boundaries</span>
+          </div>
+
+          <div class="cards">
+            <article class="info-card">
+              <h3>Reliability Rule</h3>
+              <p>No approved source means no authoritative answer. The system can collect context and route the gap, but it should not invent policy.</p>
+            </article>
+            <article class="info-card">
+              <h3>Evaluation Metrics</h3>
+              <ul>
+                <li>Citation accuracy</li>
+                <li>Unsupported-claim rate</li>
+                <li>Review-flag accuracy</li>
+                <li>False auto-approval rate</li>
+                <li>Ticket deflection and time saved</li>
+              </ul>
+            </article>
+            <article class="info-card">
+              <h3>Security Considerations</h3>
+              <ul>
+                <li>Role-based access</li>
+                <li>Source-level permissions</li>
+                <li>Prompt-injection resistance</li>
+                <li>Audit logging and retention</li>
+                <li>Sensitive-data redaction</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="two-col" style="margin-top:16px">
+            <article class="info-card">
+              <h3>What this prototype demonstrates</h3>
+              <ul>
+                <li>Natural-language intake</li>
+                <li>Source-backed answer design</li>
+                <li>Scenario-specific request collection</li>
+                <li>AI versus deterministic tool selection</li>
+                <li>Explainable human-review packet generation</li>
+              </ul>
+            </article>
+            <article class="info-card">
+              <h3>What production would still require</h3>
+              <ul>
+                <li>Authentication and permissions</li>
+                <li>Live knowledge retrieval</li>
+                <li>Ticketing and system-of-record integrations</li>
+                <li>Persistent storage</li>
+                <li>Formal AI evaluation and monitoring</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <p class="footer-note">This static demo is intentionally self-contained so it can be served from GitHub Pages or opened as a single HTML file. All examples use mock policies, mock owners, and mock workflow outcomes.</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const scenarios = {
+      travel: {
+        question: "How do I enter my airfare expense for an upcoming client onsite meeting?",
+        service: "Travel and Expense",
+        owner: "Finance / Travel Operations",
+        source: "Travel and Expense Policy (mock, reviewed Q2)",
+        system: "Expense platform / Finance review queue",
+        outcome: "collect",
+        title: "More context needed before action",
+        message: "The system can explain the general process from the approved travel source, but airfare for an upcoming client onsite may require preapproval, booking-channel rules, and project coding before submission.",
+        flags: ["approval_required", "eligibility_unclear"],
+        fields: [
+          ["employeeId", "Employee ID", "text", "e.g. 48291"],
+          ["clientProject", "Client or project code", "text", "e.g. Acme onsite / PRJ-2401"],
+          ["tripDate", "Trip date", "date", ""],
+          ["approvalStatus", "Preapproval status", "select", ["Select one", "Approved", "Pending", "Unknown"]]
+        ],
+        exceptions: [
+          ["policyGap", "Approved source does not define automation criteria"],
+          ["international", "International travel or restricted destination"],
+          ["missingApproval", "Preapproval is missing or unclear"]
+        ]
+      },
+      badge: {
+        question: "I lost my employee key card. How do I get a replacement?",
+        service: "Facilities Access",
+        owner: "Facilities / Security",
+        source: "Facilities Access Policy (mock, reviewed Q2)",
+        system: "Badge system / Facilities fulfillment task",
+        outcome: "collect",
+        title: "Standard replacement can be prepared",
+        message: "The approved source supports standard replacement requests when identity, location, replacement reason, and security exceptions are clear.",
+        flags: [],
+        fields: [
+          ["employeeId", "Employee ID", "text", "e.g. 48291"],
+          ["location", "Office location", "text", "e.g. Chicago"],
+          ["replacementReason", "Replacement reason", "select", ["Select one", "Lost card", "Stolen card", "Damaged card"]],
+          ["identityVerified", "Identity verification", "select", ["Select one", "Verified", "Not verified"]]
+        ],
+        exceptions: [
+          ["restrictedAccess", "Includes restricted-area access"],
+          ["securityIncident", "Card may have been stolen or misused"],
+          ["executiveArea", "Executive, lab, data center, or regulated-space access"]
+        ]
+      },
+      gym: {
+        question: "How do I get access to the company gym?",
+        service: "Facilities Amenities",
+        owner: "Facilities",
+        source: "Facilities Amenities Guide (mock, reviewed Q1)",
+        system: "Facilities support queue",
+        outcome: "collect",
+        title: "Answer available, eligibility may need review",
+        message: "The system can summarize gym-access guidance from the approved amenities guide, then collect role and location details if eligibility is unclear.",
+        flags: ["eligibility_unclear"],
+        fields: [
+          ["employeeId", "Employee ID", "text", "e.g. 48291"],
+          ["location", "Office location", "text", "e.g. Chicago"],
+          ["workerType", "Worker type", "select", ["Select one", "Employee", "Contractor", "Intern"]],
+          ["accessStart", "Requested start date", "date", ""]
+        ],
+        exceptions: [
+          ["notHomeOffice", "Request is for a non-home-office location"],
+          ["contractorAccess", "Worker eligibility is unclear"],
+          ["medicalException", "Accommodation or exception request"]
+        ]
+      },
+      legal: {
+        question: "How do I draft a sales agreement for a prospective client?",
+        service: "Legal / Sales Operations",
+        owner: "Legal / Sales Operations",
+        source: "Contract Intake Procedure (mock, reviewed Q2)",
+        system: "Legal intake queue",
+        outcome: "review",
+        title: "Route to legal intake",
+        message: "The system can collect structured deal context and route it to Legal, but it should not draft or approve legal terms outside the approved workflow.",
+        flags: ["approval_required", "exception_request"],
+        fields: [
+          ["requester", "Requester name", "text", "e.g. Jordan Lee"],
+          ["clientName", "Client name", "text", "e.g. Acme Corp"],
+          ["dealStage", "Deal stage", "select", ["Select one", "Discovery", "Proposal", "Negotiation", "Signature ready"]],
+          ["targetDate", "Target completion date", "date", ""]
+        ],
+        exceptions: [
+          ["nonStandardTerms", "Non-standard terms or template exception"],
+          ["regulatedClient", "Regulated industry or sensitive data involved"],
+          ["approvalMissing", "Sales leadership approval is missing"]
+        ]
+      }
+    };
+
+    const unknownScenario = {
+      service: "Unknown / New Support Topic",
+      owner: "Support triage",
+      source: "No approved source found",
+      system: "General support triage queue",
+      outcome: "blocked",
+      title: "No authoritative answer available",
+      message: "No approved source-backed workflow matched this request. The system should collect context and route a source gap instead of inventing policy.",
+      flags: ["policy_gap", "source_required"],
+      fields: [
+        ["employeeId", "Employee ID", "text", "e.g. 48291"],
+        ["businessContext", "Business context", "text", "What is the user trying to accomplish?"],
+        ["urgency", "Urgency", "select", ["Select one", "Low", "Normal", "Urgent"]],
+        ["preferredTeam", "Likely owning team", "select", ["Select one", "Facilities", "Finance", "IT", "HR", "Legal", "Unknown"]]
+      ],
+      exceptions: [
+        ["sensitive", "May include sensitive or restricted information"],
+        ["deadline", "Business deadline or operational risk"],
+        ["noOwner", "No accountable owner is known"]
+      ]
+    };
+
+    const state = {
+      currentKey: null,
+      current: null
+    };
+
+    const els = {
+      tabs: document.querySelectorAll(".tab"),
+      views: document.querySelectorAll(".view"),
+      question: document.getElementById("questionInput"),
+      apiEndpoint: document.getElementById("apiEndpointInput"),
+      classifierMode: document.getElementById("classifierMode"),
+      analyze: document.getElementById("analyzeBtn"),
+      reset: document.getElementById("resetBtn"),
+      status: document.getElementById("statusPill"),
+      outcomeBox: document.getElementById("outcomeBox"),
+      outcomeTitle: document.getElementById("outcomeTitle"),
+      outcomeMessage: document.getElementById("outcomeMessage"),
+      metaService: document.getElementById("metaService"),
+      metaOwner: document.getElementById("metaOwner"),
+      metaSource: document.getElementById("metaSource"),
+      metaSystem: document.getElementById("metaSystem"),
+      flagList: document.getElementById("flagList"),
+      intakePanel: document.getElementById("intakePanel"),
+      intakeTitle: document.getElementById("intakeTitle"),
+      intakeIntro: document.getElementById("intakeIntro"),
+      dynamicFields: document.getElementById("dynamicFields"),
+      exceptionChecks: document.getElementById("exceptionChecks"),
+      evaluate: document.getElementById("evaluateBtn"),
+      packetPanel: document.getElementById("packetPanel"),
+      packetTitle: document.getElementById("packetTitle"),
+      packetText: document.getElementById("packetText"),
+      classifierTrace: document.getElementById("classifierTrace"),
+      steps: {
+        intent: document.getElementById("stepIntent"),
+        source: document.getElementById("stepSource"),
+        control: document.getElementById("stepControl"),
+        outcome: document.getElementById("stepOutcome")
+      }
+    };
+
+    function switchTab(target) {
+      els.tabs.forEach(tab => tab.classList.toggle("active", tab.dataset.tabTarget === target));
+      els.views.forEach(view => view.classList.toggle("active", view.id === target));
+      document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function scenarioFromQuestion(text) {
+      const normalized = text.toLowerCase();
+      if (/(airfare|expense|travel|client onsite|onsite)/.test(normalized)) return "travel";
+      if (/(key card|badge|lost card|stolen card|replacement)/.test(normalized)) return "badge";
+      if (/(gym|fitness|amenities)/.test(normalized)) return "gym";
+      if (/(sales agreement|contract|legal|prospective client)/.test(normalized)) return "legal";
+      return null;
+    }
+
+    function serviceSummaries() {
+      return Object.entries(scenarios).map(([id, scenario]) => ({
+        id,
+        service: scenario.service,
+        owner: scenario.owner,
+        source_required: scenario.source,
+        allowed_outcomes: ["answer", "collect_more_information", "route_for_review", "submit_standard_task"]
+      }));
+    }
+
+    function fallbackClassification(text) {
+      const key = scenarioFromQuestion(text);
+      return {
+        key,
+        method: "deterministic fallback",
+        confidence: key ? "medium" : "low",
+        rationale: key
+          ? "Matched request keywords to a configured service definition."
+          : "No configured service keywords matched the request."
+      };
+    }
+
+    async function classifyWithOpenAIEndpoint(text) {
+      const endpoint = els.apiEndpoint.value.trim();
+      if (!endpoint || els.classifierMode.value !== "openai") {
+        return fallbackClassification(text);
+      }
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          question: text,
+          services: serviceSummaries()
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Classifier endpoint returned ${response.status}`);
+      }
+
+      const result = await response.json();
+      const key = Object.prototype.hasOwnProperty.call(scenarios, result.service_id) ? result.service_id : null;
+      return {
+        key,
+        method: result.model ? `OpenAI API (${result.model})` : "OpenAI API",
+        confidence: result.confidence || "unknown",
+        rationale: result.rationale || "The classifier returned a service selection without a rationale."
+      };
+    }
+
+    function setSteps(scenario) {
+      Object.values(els.steps).forEach(step => {
+        step.classList.remove("done", "active", "warn");
+      });
+      els.steps.intent.classList.add("done");
+      els.steps.source.classList.add(scenario.source.includes("No approved") ? "warn" : "done");
+      els.steps.control.classList.add(scenario.flags.length ? "warn" : "done");
+      els.steps.outcome.classList.add(scenario.outcome === "review" || scenario.outcome === "blocked" ? "warn" : "active");
+    }
+
+    function renderFlags(flags) {
+      els.flagList.innerHTML = "";
+      if (!flags.length) {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = "none";
+        els.flagList.appendChild(tag);
+        return;
+      }
+      flags.forEach(flag => {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = flag;
+        els.flagList.appendChild(tag);
+      });
+    }
+
+    function createField(field) {
+      const [id, label, type, config] = field;
+      const wrap = document.createElement("div");
+      const labelEl = document.createElement("label");
+      labelEl.setAttribute("for", id);
+      labelEl.textContent = label;
+      wrap.appendChild(labelEl);
+
+      if (type === "select") {
+        const select = document.createElement("select");
+        select.id = id;
+        config.forEach(optionText => {
+          const option = document.createElement("option");
+          option.value = optionText === "Select one" ? "" : optionText;
+          option.textContent = optionText;
+          select.appendChild(option);
+        });
+        wrap.appendChild(select);
+      } else {
+        const input = document.createElement("input");
+        input.id = id;
+        input.type = type;
+        input.placeholder = config;
+        wrap.appendChild(input);
+      }
+
+      return wrap;
+    }
+
+    function renderIntake(scenario) {
+      els.dynamicFields.innerHTML = "";
+      els.exceptionChecks.innerHTML = "";
+      scenario.fields.forEach(field => els.dynamicFields.appendChild(createField(field)));
+      scenario.exceptions.forEach(([id, label]) => {
+        const item = document.createElement("label");
+        item.className = "check";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = id;
+        checkbox.dataset.flag = id;
+        item.appendChild(checkbox);
+        item.appendChild(document.createTextNode(label));
+        els.exceptionChecks.appendChild(item);
+      });
+      els.packetPanel.classList.remove("visible");
+      els.intakePanel.classList.add("visible");
+      els.intakeTitle.textContent = `${scenario.service} intake`;
+      els.intakeIntro.textContent = "Only fields relevant to the selected workflow are requested. Missing required fields pause submission before human review or automation.";
+    }
+
+    function renderScenario(key, customQuestion, classification) {
+      const scenario = key ? scenarios[key] : { ...unknownScenario };
+      state.currentKey = key;
+      state.current = scenario;
+
+      document.querySelectorAll(".scenario").forEach(button => {
+        button.classList.toggle("active", button.dataset.scenario === key);
+      });
+
+      if (key && !customQuestion) {
+        els.question.value = scenario.question;
+      }
+
+      els.outcomeBox.className = `outcome ${scenario.outcome}`;
+      els.outcomeTitle.textContent = scenario.title;
+      els.outcomeMessage.textContent = scenario.message;
+      els.metaService.textContent = scenario.service;
+      els.metaOwner.textContent = scenario.owner;
+      els.metaSource.textContent = scenario.source;
+      els.metaSystem.textContent = scenario.system;
+      els.status.textContent = scenario.source.includes("No approved") ? "Source gap detected" : "Workflow identified";
+      renderFlags(scenario.flags);
+      setSteps(scenario);
+      renderIntake(scenario);
+      if (classification) {
+        els.classifierTrace.textContent = `Classifier: ${classification.method}. Confidence: ${classification.confidence}. Rationale: ${classification.rationale}`;
+      } else {
+        els.classifierTrace.textContent = "Classifier: scenario selected manually.";
+      }
+    }
+
+    function resetDemo() {
+      state.currentKey = null;
+      state.current = null;
+      els.question.value = "";
+      els.status.textContent = "Ready for a request";
+      els.outcomeBox.className = "outcome";
+      els.outcomeTitle.textContent = "No request analyzed yet";
+      els.outcomeMessage.textContent = "Start with a scenario or write a request to see how the orchestration layer responds.";
+      els.metaService.textContent = "-";
+      els.metaOwner.textContent = "-";
+      els.metaSource.textContent = "-";
+      els.metaSystem.textContent = "-";
+      els.classifierTrace.textContent = "Classifier: waiting for request.";
+      renderFlags([]);
+      els.flagList.innerHTML = '<span class="tag">none yet</span>';
+      Object.values(els.steps).forEach(step => step.classList.remove("done", "active", "warn"));
+      els.intakePanel.classList.remove("visible");
+      els.packetPanel.classList.remove("visible");
+      document.querySelectorAll(".scenario").forEach(button => button.classList.remove("active"));
+    }
+
+    function evaluateIntake() {
+      if (!state.current) return;
+
+      const scenario = state.current;
+      const missing = [];
+      const values = {};
+      scenario.fields.forEach(([id, label]) => {
+        const input = document.getElementById(id);
+        const value = input ? input.value.trim() : "";
+        values[label] = value || "[missing]";
+        if (!value) missing.push(label);
+      });
+
+      const flags = new Set(scenario.flags);
+      if (missing.length) flags.add("missing_required_info");
+      scenario.exceptions.forEach(([id]) => {
+        const checked = document.getElementById(id)?.checked;
+        if (checked) {
+          if (/restricted|executive|security/i.test(id)) flags.add("restricted_access");
+          else if (/approval/i.test(id)) flags.add("approval_required");
+          else if (/policy|owner/i.test(id)) flags.add("policy_gap");
+          else if (/sensitive|regulated|international/i.test(id)) flags.add("security_sensitive");
+          else flags.add("exception_request");
+        }
+      });
+
+      const canSubmit = scenario.service === "Facilities Access" && flags.size === 0;
+      const decision = missing.length
+        ? "Collect missing information"
+        : canSubmit
+          ? "Submit standard fulfillment task"
+          : "Route for human review";
+
+      const userMessage = missing.length
+        ? "The system should ask the employee for missing required fields before routing or submitting."
+        : canSubmit
+          ? "This request meets the mock automation criteria and can be submitted to the system of record."
+          : "This request is ready for human review with source, owner, flags, and structured context.";
+
+      els.outcomeBox.className = `outcome ${missing.length ? "collect" : canSubmit ? "answer" : "review"}`;
+      els.outcomeTitle.textContent = decision;
+      els.outcomeMessage.textContent = userMessage;
+      els.metaSystem.textContent = canSubmit ? "Badge system / fulfillment task" : scenario.system;
+      els.status.textContent = missing.length ? "More info needed" : canSubmit ? "Ready to submit" : "Review packet ready";
+      renderFlags(Array.from(flags));
+      els.steps.outcome.classList.remove("active", "warn", "done");
+      els.steps.outcome.classList.add(missing.length ? "active" : canSubmit ? "done" : "warn");
+
+      const lines = [
+        `Request: ${els.question.value.trim() || scenario.question || "User-provided request"}`,
+        `Service: ${scenario.service}`,
+        `Decision: ${decision}`,
+        `Source: ${scenario.source}`,
+        `Owner: ${scenario.owner}`,
+        `Next system: ${canSubmit ? "Badge system / fulfillment task" : scenario.system}`,
+        `Review flags: ${flags.size ? Array.from(flags).join(", ") : "none"}`,
+        "",
+        "Collected context:"
+      ];
+
+      Object.entries(values).forEach(([label, value]) => {
+        lines.push(`- ${label}: ${value}`);
+      });
+
+      lines.push("", `Employee-facing message: ${userMessage}`);
+      els.packetTitle.textContent = missing.length ? "Missing-information prompt" : canSubmit ? "Fulfillment packet" : "Human-review packet";
+      els.packetText.textContent = lines.join("\n");
+      els.packetPanel.classList.add("visible");
+    }
+
+    document.querySelectorAll("[data-tab-target]").forEach(control => {
+      control.addEventListener("click", () => switchTab(control.dataset.tabTarget));
+    });
+
+    document.querySelectorAll("[data-jump]").forEach(control => {
+      control.addEventListener("click", () => {
+        document.getElementById(control.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    document.querySelectorAll(".scenario").forEach(button => {
+      button.addEventListener("click", () => renderScenario(button.dataset.scenario));
+    });
+
+    els.apiEndpoint.value = localStorage.getItem("openaiClassifierEndpoint") || "";
+    els.classifierMode.value = localStorage.getItem("classifierMode") || "fallback";
+    els.apiEndpoint.addEventListener("change", () => {
+      localStorage.setItem("openaiClassifierEndpoint", els.apiEndpoint.value.trim());
+    });
+    els.classifierMode.addEventListener("change", () => {
+      localStorage.setItem("classifierMode", els.classifierMode.value);
+    });
+
+    els.analyze.addEventListener("click", async () => {
+      const text = els.question.value.trim();
+      if (!text) {
+        resetDemo();
+        els.classifierTrace.textContent = "Classifier: enter a request first.";
+        return;
+      }
+
+      els.status.textContent = "Classifying request...";
+      els.classifierTrace.textContent = "Classifier: running...";
+      try {
+        const classification = await classifyWithOpenAIEndpoint(text);
+        renderScenario(classification.key, true, classification);
+      } catch (error) {
+        const fallback = fallbackClassification(text);
+        fallback.rationale = `${fallback.rationale} OpenAI endpoint was unavailable: ${error.message}`;
+        renderScenario(fallback.key, true, fallback);
+      }
+    });
+
+    els.reset.addEventListener("click", resetDemo);
+    els.evaluate.addEventListener("click", evaluateIntake);
+  </script>
+</body>
+</html>

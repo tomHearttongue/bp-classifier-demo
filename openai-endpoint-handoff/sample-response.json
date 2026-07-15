@@ -1,0 +1,8 @@
+{
+  "service_id": "travel",
+  "confidence": "high",
+  "rationale": "The employee asks about airfare expense entry for client travel, which maps to Travel and Expense.",
+  "missing_source": false,
+  "ambiguous": false,
+  "model": "gpt-5-mini"
+}
