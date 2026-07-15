@@ -103,11 +103,13 @@ Only use API-key authentication if your endpoint actually checks that header.
 
 If you share the GPT publicly or by link and it uses Actions, provide a valid privacy policy URL.
 
-For an early private test, you can use a simple GitHub Pages or GitHub repo page that states:
+Use this GitHub Pages privacy policy URL:
 
 ```text
-This demo sends support-request text and service catalog metadata to the classifier endpoint for intent classification. Do not enter confidential, personal, or production company data.
+https://tomhearttongue.github.io/bp-classifier-demo/privacy.html
 ```
+
+The policy states that this demo may send support-request text and service catalog metadata to a classifier endpoint for intent classification, and that users should not enter confidential, personal, or production company data.
 
 ## Step 6: Paste The OpenAPI Schema
 
@@ -361,7 +363,7 @@ Action server URL:
 Action path:
 Authentication mode:
 Required headers:
-Privacy policy URL:
+Privacy policy URL: https://tomhearttongue.github.io/bp-classifier-demo/privacy.html
 Example successful action call:
 Example error action call:
 Can the GitHub Pages app call the same endpoint directly?

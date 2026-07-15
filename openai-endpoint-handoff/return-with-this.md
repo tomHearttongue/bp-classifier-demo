@@ -72,6 +72,12 @@ Expected GitHub Pages URL:
 https://tomhearttongue.github.io/bp-classifier-demo/
 ```
 
+Privacy policy URL for GPT Actions:
+
+```text
+https://tomhearttongue.github.io/bp-classifier-demo/privacy.html
+```
+
 ## What I Need To Implement The Working Prototype
 
 At minimum, I need:

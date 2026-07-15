@@ -72,6 +72,9 @@ This repo includes `worker/openai-classifier.js`, a small server-side endpoint t
 
 See [docs/openai-api-integration.md](docs/openai-api-integration.md).
 
+Privacy policy for GPT Actions or public demos:
+[https://tomhearttongue.github.io/bp-classifier-demo/privacy.html](https://tomhearttongue.github.io/bp-classifier-demo/privacy.html)
+
 ## Publish With GitHub Pages
 
 1. Push these files to `tomHearttongue/bp-classifier-demo`.
@@ -86,6 +89,7 @@ To enable live OpenAI classification, deploy the Worker endpoint separately and 
 
 ```text
 index.html                         Static GitHub Pages prototype
+privacy.html                       Privacy policy for GPT Actions/demo use
 README.md                          Reviewer-facing project overview
 docs/openai-api-integration.md     OpenAI endpoint setup notes
 worker/openai-classifier.js        Optional Cloudflare Worker classifier
