@@ -6,6 +6,25 @@ const corsHeaders = {
 
 export default {
   async fetch(request, env) {
+    if (request.method === "GET") {
+      return json({
+        ok: true,
+        service: "bp-classifier-demo",
+        message: "Classifier endpoint is running. Send POST /classify with application/json.",
+        expected_body: {
+          question: "I lost my employee key card. How do I get a replacement?",
+          services: [
+            {
+              id: "badge",
+              service: "Facilities Access",
+              owner: "Facilities / Security",
+              source_required: "Facilities Access Policy"
+            }
+          ]
+        }
+      });
+    }
+
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders });
     }
@@ -30,7 +49,7 @@ export default {
       source_required: service.source_required
     }));
 
-    const model = env.OPENAI_MODEL || "gpt-5-mini";
+    const model = env.OPENAI_MODEL || "gpt-5.6-luna";
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
@@ -47,8 +66,10 @@ export default {
                 type: "input_text",
                 text: [
                   "Classify an employee support request into one configured service.",
-                  "Return only JSON with service_id, confidence, and rationale.",
+                  "Return only JSON with service_id, confidence, rationale, missing_source, and ambiguous.",
                   "If no service clearly matches, use service_id null.",
+                  "Set missing_source true when the request requires a source not present in the catalog.",
+                  "Set ambiguous true when multiple services could reasonably own the request.",
                   "Do not decide eligibility, approvals, or workflow actions."
                 ].join(" ")
               }
@@ -89,9 +110,15 @@ export default {
                 rationale: {
                   type: "string",
                   maxLength: 280
+                },
+                missing_source: {
+                  type: "boolean"
+                },
+                ambiguous: {
+                  type: "boolean"
                 }
               },
-              required: ["service_id", "confidence", "rationale"]
+              required: ["service_id", "confidence", "rationale", "missing_source", "ambiguous"]
             }
           }
         }
@@ -110,7 +137,12 @@ export default {
       return json({ error: "OpenAI response did not include output_text", detail: data }, 502);
     }
 
-    const result = JSON.parse(text);
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (error) {
+      return json({ error: "OpenAI response was not valid JSON", raw: text }, 502);
+    }
     return json({ ...result, model });
   }
 };

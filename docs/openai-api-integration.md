@@ -30,7 +30,7 @@ Use Cloudflare Workers or another free/low-cost serverless host.
 1. Create a new Worker.
 2. Copy `worker/openai-classifier.js` into the Worker source.
 3. Set a Worker secret named `OPENAI_API_KEY`.
-4. Optionally set `OPENAI_MODEL`; otherwise the Worker uses `gpt-5-mini`.
+4. Optionally set `OPENAI_MODEL`; otherwise the Worker uses `gpt-5.6-luna`.
 5. Deploy the Worker.
 6. Copy the Worker URL.
 7. Open the GitHub Pages demo at `https://tomhearttongue.github.io/bp-classifier-demo/`.
@@ -67,9 +67,15 @@ The Worker returns:
   "service_id": "badge",
   "confidence": "high",
   "rationale": "The request asks for replacement of a lost employee key card.",
-  "model": "gpt-5-mini"
+  "missing_source": false,
+  "ambiguous": false,
+  "model": "gpt-5.6-luna"
 }
 ```
+
+## Browser Preview Behavior
+
+If you open the Worker URL directly in a browser, the request is a `GET`. The classifier itself uses `POST`, so the Worker returns a health message explaining that it is running and expects `POST /classify`.
 
 ## Governance Boundary
 

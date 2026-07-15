@@ -323,7 +323,7 @@ Expected action result:
   "rationale": "The employee asks about airfare expense entry for client travel, which maps to Travel and Expense.",
   "missing_source": false,
   "ambiguous": false,
-  "model": "gpt-5-mini"
+  "model": "gpt-5.6-luna"
 }
 ```
 
@@ -348,7 +348,7 @@ Good result:
   "rationale": "The request does not clearly match the configured services and likely requires a separate workplace safety or facilities policy source.",
   "missing_source": true,
   "ambiguous": false,
-  "model": "gpt-5-mini"
+  "model": "gpt-5.6-luna"
 }
 ```
 

@@ -53,7 +53,7 @@ Return JSON matching `classification-schema.json`.
   "rationale": "The request is about replacing a lost employee key card, which maps to Facilities Access.",
   "missing_source": false,
   "ambiguous": false,
-  "model": "gpt-5-mini"
+  "model": "gpt-5.6-luna"
 }
 ```
 
@@ -79,6 +79,18 @@ If the endpoint fails, return a conventional JSON error:
 ```
 
 The prototype will fall back to deterministic keyword matching when the endpoint is unavailable.
+
+## Health Check
+
+If the endpoint is opened in a browser with `GET`, it may return a health response instead of classifying:
+
+```json
+{
+  "ok": true,
+  "service": "bp-classifier-demo",
+  "message": "Classifier endpoint is running. Send POST /classify with application/json."
+}
+```
 
 ## CORS
 
